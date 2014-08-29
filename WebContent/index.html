@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="MyApp">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body ng-controller="MyCtrl">
+	<input type="text" ng-model="pessoa.nome" placeholder="Add new" />
+	<button ng-click="add()">Add</button> <br>
+	<input type="text" name="nome" ng-model="nome" placeholder="Find"/>
+
+	<ul ng-repeat="pessoa in pessoas | filter: nome ">
+		<li>{{ pessoa.nome | uppercase }}</li>
+	</ul>
+	
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
+
+	<script type="text/javascript">
+		angular.module('MyApp', [])
+			.controller('MyCtrl', ['$scope', 'MySrvc', function($scope, MySrvc) {
+				$scope.pessoas = MySrvc.getPessoas();
+
+				$scope.add = function() {
+					MySrvc.addPessoa($scope.pessoa);
+					$scope.pessoa = null;
+				}
+			}])
+			.factory('MySrvc', ['$http', function($http) {
+				var pessoas = [];
+				return {
+					getPessoas: function() {
+						$http.get('/api/pessoas')
+							.success(function(data) {
+								return data;
+							});
+						
+						//return pessoas;
+					},
+					addPessoa: function(pessoa) {
+						$http.post('/api/pessoas', pessoa)
+							.success(function() {
+								
+							});
+						//pessoas.push(pessoa);
+					}
+				}
+			}]);
+	</script>
+</body>
+</html>

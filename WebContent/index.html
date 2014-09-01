@@ -18,30 +18,35 @@
 	<script type="text/javascript">
 		angular.module('MyApp', [])
 			.controller('MyCtrl', ['$scope', 'MySrvc', function($scope, MySrvc) {
-				$scope.pessoas = MySrvc.getPessoas();
+				var pessoasPromise = MySrvc.getPessoas();
+				pessoasPromise.then(function(data) {
+					$scope.pessoas = data;
+				});
 
 				$scope.add = function() {
 					MySrvc.addPessoa($scope.pessoa);
 					$scope.pessoa = null;
 				}
 			}])
-			.factory('MySrvc', ['$http', function($http) {
-				var pessoas = [];
+			.factory('MySrvc', ['$http', '$q', function($http, $q) {
+				
 				return {
 					getPessoas: function() {
-						$http.get('/api/pessoas')
+						var deferred = $q.defer();
+						
+						$http.get('/eidolon-client-web/api/pessoas')
 							.success(function(data) {
-								return data;
+								deferred.resolve(data);
 							});
 						
-						//return pessoas;
+						return deferred.promise;
 					},
 					addPessoa: function(pessoa) {
-						$http.post('/api/pessoas', pessoa)
+						console.log(pessoa);
+						$http.post('/eidolon-client-web/api/pessoas', pessoa)
 							.success(function() {
 								
 							});
-						//pessoas.push(pessoa);
 					}
 				}
 			}]);

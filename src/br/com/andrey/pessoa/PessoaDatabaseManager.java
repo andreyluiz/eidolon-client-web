@@ -21,7 +21,9 @@ public class PessoaDatabaseManager {
 	@Inject private ODB odb;
 	
 	public String create(Pessoa pessoa) throws ObjetoInvalidoException {
-		if (pessoa == null) throw new ObjetoInvalidoException("O objeto passado para criação é inválido.");
+		if (pessoa == null) throw new ObjetoInvalidoException("O objeto passado para criaï¿½ï¿½o ï¿½ invï¿½lido.");
+		List<Object> todos = getAll();
+		pessoa.setId(todos.size() + 1);
 		odb.store(pessoa);
 		return "/pessoas/" + pessoa.getId();
 	}
@@ -32,19 +34,19 @@ public class PessoaDatabaseManager {
 	}
 
 	public Pessoa getOneById(String id, boolean manageDB) throws ObjetoNaoEncontradoException, IdentificadorInvalidoException {
-		if (!Util.isNumber(id)) throw new IdentificadorInvalidoException("O identificador é inválido.");
+		if (!Util.isNumber(id)) throw new IdentificadorInvalidoException("O identificador ï¿½ invï¿½lido.");
 		return getById(id);
 	}
 	
 	private Pessoa getById(String id) throws ObjetoNaoEncontradoException {
 		IQuery query = new CriteriaQuery(Pessoa.class, Where.equal("id", Integer.valueOf(id)));
 		Objects<Pessoa> result = odb.getObjects(query);
-		if (result.size() == 0) throw new ObjetoNaoEncontradoException("O objeto com id " + id + " não foi encontrado.");
+		if (result.size() == 0) throw new ObjetoNaoEncontradoException("O objeto com id " + id + " nï¿½o foi encontrado.");
 		return result.getFirst();
 	}
 
 	public void update(String id, Pessoa pessoa) throws ObjetoNaoEncontradoException, IdentificadorInvalidoException, ObjetoInvalidoException {
-		if (pessoa == null) throw new ObjetoInvalidoException("O objeto passado para alteração é inválido.");
+		if (pessoa == null) throw new ObjetoInvalidoException("O objeto passado para alteraï¿½ï¿½o ï¿½ invï¿½lido.");
 		Pessoa pessoaParaAlterar = getById(id);
 		pessoaParaAlterar.setNome(pessoa.getNome());
 		odb.store(pessoaParaAlterar);
